@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login-GitHub Issues Tracker</title>
+
+  <!-- ── DaisyUI + Tailwind ── -->
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <!-- ── Google Font ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet" />
+
+  <!-- ── Font Awesome  ── -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <style>
+    
+    * { font-family: "Geist", sans-serif; }
+
+    .input-wrap {
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .input-wrap:focus-within {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+    }
+  </style>
+</head>
+
+
+<body class="min-h-screen bg-slate-100 flex items-center justify-center px-4 py-8">
+
+      <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-8 flex flex-col gap-5">
+
+      <div class="flex flex-col items-center gap-2 mb-1">
+
+    
+      <div class="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden">
+      <img src="assets/github-logo.png" alt="logo" class="w-10 h-10 object-contain"></div>
+
+      <h1 class="text-xl font-bold text-gray-900 mt-1">GitHub Issues Tracker</h1>
+      <p class="text-sm text-gray-400 text-center">Sign in to manage your issues</p>
+    </div>
+
+    
+        <div id="errorAlert"
+          class="hidden items-center gap-2 bg-red-50 border border-red-200
+                text-red-600 text-sm rounded-xl px-4 py-3">
+        <i class="fa-solid fa-circle-exclamation flex-shrink-0"></i>
+        <span id="errorMsg">Invalid username or password</span>
+        </div>
+
+  <div class="flex flex-col gap-1">
+  <label class="text-sm font-semibold text-gray-700" for="username">Username</label>
+
+  <div class="flex items-center gap-2 border border-gray-200
+              rounded-xl px-3 py-2.5 bg-white focus-within:border-blue-500">
+
+    <i class="fa-solid fa-user text-gray-300 text-sm flex-shrink-0"></i>
+
+    <input 
+      id="username"
+      type="text"
+      placeholder="Enter username"
+      class="grow bg-transparent outline-none border-none text-sm text-gray-700 placeholder:text-gray-300"
+      autocomplete="username"
+    />
+
+  </div>
+</div>
+
+    <div class="flex flex-col gap-1">
+  <label class="text-sm font-semibold text-gray-700" for="password">Password</label>
+
+  <div class="flex items-center gap-2 border border-gray-200
+              rounded-xl px-3 py-2.5 bg-white">
+
+    <i class="fa-solid fa-lock text-gray-300 text-sm flex-shrink-0"></i>
+
+    <input id="password" type="password" placeholder="Enter password"
+      class="grow bg-transparent outline-none border-none text-sm text-gray-700 placeholder:text-gray-300"
+      autocomplete="current-password" />
+
+    <button type="button" id="togglePwd"
+      class="text-gray-300 hover:text-gray-500 transition-colors flex-shrink-0">
+
+      <i class="fa-solid fa-eye text-sm" id="eyeIcon"></i>
+
+    </button>
+
+  </div>
+</div>
+
+
+<button id="loginBtn"
+  class="w-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800
+         text-white font-semibold rounded-xl py-2.5 text-sm
+         transition-colors flex items-center justify-center gap-2 mt-3">Sign In</button>
+
+     <div class="flex items-center gap-3">
+         <div class="flex-1 h-px bg-gray-100"></div>
+        <span class="text-xs text-gray-300">Demo Credentials</span>
+         <div class="flex-1 h-px bg-gray-100"></div>
+     </div>
+
+   
+    <div class="bg-gray-50 rounded-xl p-4 text-center">
+          <p class="text-xs text-gray-400 mb-3">Use these to sign in:</p>
+           <div class="flex justify-center gap-8">
+          <div>
+             <p class="text-xs text-gray-400 mb-1">Username</p>
+              <p class="font-mono font-bold text-indigo-600 text-sm">admin</p>
+           </div>
+           <div class="w-px bg-gray-200"></div>
+         <div>
+             <p class="text-xs text-gray-400 mb-1">Password</p>
+             <p class="font-mono font-bold text-indigo-600 text-sm">admin123</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+ 
+  
+  <script src="js/login.js"></script>
+</body>
+</html>
