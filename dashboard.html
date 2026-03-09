@@ -5,35 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>GitHub Issues Tracker</title>
 
-  <!-- ── DaisyUI + Tailwind ── -->
   <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-  <!-- ── Google Font ── -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap" rel="stylesheet" />
-
-  <!-- ── Font Awesome ── -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <style>
-    
     * { font-family: "Geist", sans-serif; }
 
-    .card-open   { border-top: 3px solid #22c55e; } 
-    .card-closed { border-top: 3px solid #a855f7; } 
+    /* ── Card top border ── */
+    .card-open   { border-top: 3px solid #22c55e; }
+    .card-closed { border-top: 3px solid #a855f7; }
 
     .issue-card {
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
-  cursor: pointer;
-  will-change: transform;
-  transform: translateZ(0);
-}
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+      cursor: pointer;
+      will-change: transform;
+      transform: translateZ(0);
+    }
     .issue-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 16px 40px rgba(0,0,0,0.10);
-}
+      transform: translateY(-3px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.10);
+    }
 
     .cards-grid {
       display: grid;
@@ -44,6 +39,7 @@
     @media (min-width: 860px)  { .cards-grid { grid-template-columns: repeat(3, 1fr); } }
     @media (min-width: 1200px) { .cards-grid { grid-template-columns: repeat(4, 1fr); } }
 
+
     .tab-btn {
       border-radius: 8px;
       padding: 6px 18px;
@@ -53,26 +49,22 @@
       transition: all 0.18s;
       border: none;
     }
-   
-    .tab-btn.active { background: #6366f1; color: #fff; }
-    .tab-btn:not(.active) { background: #f1f5f9; color: #64748b; }
-    .tab-btn:not(.active):hover { background: #e2e8f0; }
+    .tab-btn.active              { background: #6366f1; color: #fff; }
+    .tab-btn:not(.active)        { background: #f1f5f9; color: #64748b; }
+    .tab-btn:not(.active):hover  { background: #e2e8f0; }
 
-  
-   .status-ring-open {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-}
-.status-ring-closed {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-}
+    .status-ring-open, .status-ring-closed {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .status-ring-open   { background: #f0fdf4; }
+    .status-ring-closed { background: #faf5ff; }
 
     .priority-high   { background: #fef2f2; color: #ef4444; border: 1px solid #fecaca; }
     .priority-medium { background: #fff7ed; color: #f97316; border: 1px solid #fed7aa; }
     .priority-low    { background: #f0fdf4; color: #22c55e; border: 1px solid #bbf7d0; }
+
     .label-bug         { background: #fef2f2; color: #ef4444; border: 1.5px solid #fecaca; }
     .label-help        { background: #fffbeb; color: #f59e0b; border: 1.5px solid #fde68a; }
     .label-enhancement { background: #eff6ff; color: #3b82f6; border: 1.5px solid #bfdbfe; }
@@ -84,6 +76,7 @@
     .label-good        { background: #f0fdf4; color: #16a34a; border: 1.5px solid #86efac; }
     .label-default     { background: #f8fafc; color: #64748b; border: 1.5px solid #e2e8f0; }
 
+    
     .modal-backdrop-custom {
       position: fixed; inset: 0;
       background: rgba(0,0,0,0.45);
@@ -99,74 +92,73 @@
 </head>
 
 <body class="bg-slate-100 min-h-screen">
-  <nav class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-10 lg:px-20 h-14 flex items-center justify-between gap-3">
-      <div class="flex items-center gap-2.5 flex-shrink-0">
-        <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0">
-          <img src="assets/github-logo.png" alt="">
-        </div>
 
-        <span class="font-bold text-gray-900 text-sm sm:text-base xs:block">
+  <nav class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-10 lg:px-20 h-14
+                flex items-center justify-between gap-3">
+
+    
+      <div class="flex items-center gap-2.5 flex-shrink-0">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+          <img src="assets/github-logo.png" alt="logo" class="w-full h-full object-contain" />
+        </div>
+        <span class="font-bold text-gray-900 text-sm sm:text-base">
           GitHub Issues Tracker
         </span>
       </div>
 
-   
-     <div class="flex items-center gap-2 sm:gap-3">
-
-  <label class="input">
+      
+      <div class="flex items-center gap-2 sm:gap-3">
+      
+        <label class="input">
   <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <g
-      stroke-linejoin="round"stroke-linecap="round"stroke-width="2.5"fill="none"stroke="currentColor">
+      stroke-linejoin="round"
+      stroke-linecap="round"
+      stroke-width="2.5"
+      fill="none"
+      stroke="currentColor">
       <circle cx="11" cy="11" r="8"></circle>
       <path d="m21 21-4.3-4.3"></path>
-     </g>
-      </svg>
-      <input type="search" required placeholder="Search issues..." />
-    </label>
+      </g>
+   </svg>
+   <input type="search" required placeholder="Search issues..." />
+  </label>
 
-  <button class="btn btn-primary flex items-center gap-1.5 px-2.5 sm:px-4 text-xs sm:text-sm flex-shrink-0">
-  <i class="fa-solid fa-plus text-xs"></i>
-  <span class="hidden sm:inline">New Issue</span>
-</button>
+        
+        <button class="btn btn-primary flex items-center gap-1.5
+                       px-2.5 sm:px-4 text-xs sm:text-sm flex-shrink-0">
+          <i class="fa-solid fa-plus text-xs"></i>
+          <span class="hidden sm:inline">New Issue</span>
+        </button>
 
-</div>
-
-
+      </div>
     </div>
   </nav>
-  
+
+
   <main class="max-w-7xl mx-auto px-4 sm:px-10 lg:px-20 py-6 space-y-4">
 
-   
+    
     <div class="bg-white rounded-2xl shadow-sm px-4 py-3 flex gap-2">
-      <button class="tab-btn active" id="tabAll" onclick="switchTab('all', this)">
-        All
-      </button>
-      <button class="tab-btn" id="tabOpen" onclick="switchTab('open', this)">
-        Open
-      </button>
-      <button class="tab-btn" id="tabClosed" onclick="switchTab('closed', this)">
-        Closed
-      </button>
+      <button class="tab-btn active" id="tabAll"    onclick="switchTab('all', this)">All</button>
+      <button class="tab-btn"        id="tabOpen"   onclick="switchTab('open', this)">Open</button>
+      <button class="tab-btn"        id="tabClosed" onclick="switchTab('closed', this)">Closed</button>
     </div>
 
- 
+   
     <div class="bg-white rounded-2xl shadow-sm px-5 py-4
                 flex justify-between items-center gap-3 flex-wrap">
-
-     
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center
-                    justify-center flex-shrink-0">
-           <img src="assets/Aperture.png" alt="">
+                    justify-center flex-shrink-0 overflow-hidden">
+          <img src="assets/Aperture.png" alt="logo" class="w-6 h-6 object-contain" />
         </div>
         <div>
           <h2 class="text-base font-bold text-gray-900" id="issueCountText">Loading…</h2>
           <p class="text-xs text-gray-400">Track and manage your project issues</p>
         </div>
       </div>
-
       <div class="flex items-center gap-4 text-sm font-medium">
         <div class="flex items-center gap-1.5">
           <span class="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
@@ -181,8 +173,7 @@
       </div>
     </div>
 
-
-
+    
     <div id="cardsArea">
       <div class="flex flex-col items-center justify-center py-24 gap-3 text-gray-300">
         <i class="fa-solid fa-spinner fa-spin text-4xl text-indigo-400"></i>
@@ -192,22 +183,21 @@
 
   </main>
 
+
   <div id="modalBackdrop" class="modal-backdrop-custom" onclick="closeModalOnBackdrop(event)">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
 
-    <div id="modalBox"
-         class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
-
-     
+      
       <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
         <div class="flex items-center gap-2 flex-wrap">
-          <img src="assets/Open-Status.png" alt="">
-    
+
+          <img id="modalIcon" src="assets/Open-Status.png" alt="status"
+               class="w-5 h-5 object-contain" />
+
           <span id="modalStatusBadge"
-                class="text-xs font-semibold px-3 py-1 rounded-full">Open</span>
-        
+                class="text-xs font-semibold px-3 py-1 rounded-full"></span>
           <div id="modalHeaderLabels" class="flex gap-1.5 flex-wrap"></div>
         </div>
-        
         <button onclick="closeModal()"
                 class="text-gray-300 hover:text-gray-600 transition-colors
                        w-8 h-8 rounded-full hover:bg-gray-100 flex items-center
@@ -216,8 +206,8 @@
         </button>
       </div>
 
+      
       <div class="px-6 py-5 space-y-3">
-
         <h2 class="text-lg font-bold text-gray-900 leading-snug" id="modalTitle"></h2>
         <p class="text-xs text-gray-400" id="modalMeta"></p>
         <p class="text-sm text-gray-500 leading-relaxed" id="modalDesc"></p>
@@ -233,18 +223,17 @@
                   class="text-xs font-bold px-3 py-1 rounded-full inline-block"></span>
           </div>
         </div>
-
       </div>
 
+   
       <div class="px-6 py-4 flex justify-end border-t border-gray-100">
         <button onclick="closeModal()"
-              class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm
-            font-semibold px-6 py-2 rounded-xl transition-colors">Close</button>
+                class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm
+                       font-semibold px-6 py-2 rounded-xl transition-colors">Close</button>
       </div>
 
     </div>
   </div>
- 
 
   <script src="js/script.js"></script>
 </body>

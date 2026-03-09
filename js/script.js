@@ -8,12 +8,12 @@ if (localStorage.getItem('isLoggedIn') !== 'true') {
 
 function logout() {
   localStorage.removeItem('isLoggedIn');
-  window.location.href = 'dashboard.html';
+  window.location.href = 'login.html'; 
 }
 
-let allIssues   = [];     
-let activeTab   = 'all';  
-let searchTimer = null;  
+let allIssues   = [];
+let activeTab   = 'all';
+let searchTimer = null;
 
 document.addEventListener('DOMContentLoaded', () => {
   fetchAllIssues();
@@ -34,25 +34,22 @@ async function fetchAllIssues() {
   try {
     const res  = await fetch(API_ALL);
     const data = await res.json();
-    allIssues = Array.isArray(data) ? data : (data.data || data.issues || []);
-
+    allIssues  = Array.isArray(data) ? data : (data.data || data.issues || []);
     updateStats();
     renderCards(allIssues);
   } catch (err) {
     showError('Failed to load issues. Please try again.');
-    console.error('API error:', err);
   }
 }
 
 async function fetchSearchResults(query) {
   showSpinner();
   try {
-    const res     = await fetch(API_SEARCH + encodeURIComponent(query));
-    const data    = await res.json();
-    let results   = Array.isArray(data) ? data : (data.data || data.issues || []);
+    const res   = await fetch(API_SEARCH + encodeURIComponent(query));
+    const data  = await res.json();
+    let results = Array.isArray(data) ? data : (data.data || data.issues || []);
     if (activeTab === 'open')   results = results.filter(i => getStatus(i) === 'open');
     if (activeTab === 'closed') results = results.filter(i => getStatus(i) === 'closed');
-
     renderCards(results);
   } catch (err) {
     const q = query.toLowerCase();
@@ -69,7 +66,6 @@ function switchTab(tab, btn) {
   activeTab = tab;
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-
   const q = document.getElementById('searchInput')?.value.trim() || '';
   q ? fetchSearchResults(q) : renderCards(getFilteredByTab());
 }
@@ -84,12 +80,12 @@ function getStatus(issue) {
   return (issue.status || '').toLowerCase();
 }
 
+// ── Stats Bar Update ──────────────────────────────────────
 function updateStats() {
   const total  = allIssues.length;
   const open   = allIssues.filter(i => getStatus(i) === 'open').length;
   const closed = allIssues.filter(i => getStatus(i) === 'closed').length;
-
-  const el = (id) => document.getElementById(id);
+  const el = id => document.getElementById(id);
   if (el('issueCountText')) el('issueCountText').textContent = `${total} Issues`;
   if (el('openCount'))      el('openCount').textContent      = open;
   if (el('closedCount'))    el('closedCount').textContent    = closed;
@@ -98,7 +94,6 @@ function updateStats() {
 function renderCards(issues) {
   const area = document.getElementById('cardsArea');
   if (!area) return;
-
   if (!issues.length) {
     area.innerHTML = `
       <div class="flex flex-col items-center justify-center py-24 gap-3 text-gray-300">
@@ -107,26 +102,21 @@ function renderCards(issues) {
       </div>`;
     return;
   }
-
-  const html = issues.map(issue => buildCard(issue)).join('');
-  area.innerHTML = `<div class="cards-grid">${html}</div>`;
+  area.innerHTML = `<div class="cards-grid">${issues.map(buildCard).join('')}</div>`;
 }
-
 
 function buildCard(issue) {
   const isOpen      = getStatus(issue) === 'open';
   const borderClass = isOpen ? 'card-open' : 'card-closed';
-
   const priority    = (issue.priority || 'MEDIUM').toUpperCase();
   const priClass    = getPriorityClass(priority);
   const labelsHTML  = buildLabels(issue.labels);
-  const date = formatDate(issue.createdAt || issue.created_at);
-  const desc   = truncate(issue.description || '', 100);
-  const title  = esc(issue.title || 'Untitled Issue');
-  const author = esc(issue.author || 'Unknown');
-  const number = issue.number || issue.id || '';
+  const date        = formatDate(issue.createdAt || issue.created_at);
+  const desc        = truncate(issue.description || '', 100);
+  const title       = esc(issue.title || 'Untitled Issue');
+  const author      = esc(issue.author || 'Unknown');
+  const number      = issue.number || issue.id || '';
 
- 
   const dataStr = JSON.stringify(issue)
     .replace(/'/g, "&#39;")
     .replace(/"/g, '&quot;');
@@ -135,64 +125,52 @@ function buildCard(issue) {
   <div class="bg-white rounded-2xl shadow-sm issue-card ${borderClass}"
        onclick="openModal(JSON.parse(this.dataset.issue))"
        data-issue="${dataStr}">
-
     <div class="p-4 flex flex-col gap-3">
+
+      <!-- ── Top: Icon + Priority ── -->
       <div class="flex items-start justify-between">
-
+        <div class="${isOpen ? 'status-ring-open' : 'status-ring-closed'}">
         
-         <div class="${isOpen ? 'status-ring-open' : 'status-ring-closed'}">
-             <img src="${isOpen ? 'assets/Open-Status.png' : 'assets/Closed- Status .png'}"
-           alt="logo" class="w-4 h-4 object-contain" />
+          <img src="${isOpen ? 'assets/Open-Status.png' : 'assets/Closed- Status .png'}"
+               alt="status" class="w-4 h-4 object-contain" />
         </div>
-
         <span class="text-xs font-bold px-3 py-1 rounded-full ${priClass}">
           ${priority}
         </span>
       </div>
+      
+      <h3 class="font-bold text-gray-900 text-sm leading-snug line-clamp-2">${title}</h3>
 
-      <h3 class="font-bold text-gray-900 text-sm leading-snug line-clamp-2">
-        ${title}
-      </h3>
-
-    
-      <p class="text-gray-400 text-xs leading-relaxed line-clamp-3">
-        ${esc(desc)}
-      </p>
+      <p class="text-gray-400 text-xs leading-relaxed line-clamp-3">${esc(desc)}</p>
 
       <div class="flex gap-1.5 flex-wrap">${labelsHTML}</div>
-
     </div>
 
-   <div class="px-4 py-3 border-t border-gray-100 flex flex-col
-            gap-0.5 text-xs text-gray-400">
-  <span>#${number} by ${author}</span>
-  <span>${date}</span>
-</div>
-
+    <div class="px-4 py-3 flex flex-col gap-0.5 text-xs text-gray-400"
+         style="box-shadow: inset 0 1px 0 0 rgba(0,0,0,0.06);">
+      <span>#${number} by ${author}</span>
+      <span>${date}</span>
+    </div>
   </div>`;
 }
 
-
 const LABEL_MAP = {
-  'bug':              { icon: 'fa-solid fa-bug',         cls: 'label-bug'         },
-  'help wanted':      { icon: 'fa-regular fa-life-ring', cls: 'label-help'        },
-  'enhancement':      { icon: '',                        cls: 'label-enhancement'  },
-  'question':         { icon: '',                        cls: 'label-question'     },
-  'documentation':    { icon: '',                        cls: 'label-docs'         },
-  'duplicate':        { icon: '',                        cls: 'label-duplicate'    },
-  'wontfix':          { icon: '',                        cls: 'label-wontfix'      },
-  'invalid':          { icon: '',                        cls: 'label-invalid'      },
-  'good first issue': { icon: '',                        cls: 'label-good'         },
+  'bug':              { icon: 'fa-solid fa-bug',      cls: 'label-bug'         },
+  'help wanted':      { icon: 'fa-solid fa-life-ring', cls: 'label-help'       },
+  'enhancement':      { icon: '',                      cls: 'label-enhancement' },
+  'question':         { icon: '',                      cls: 'label-question'    },
+  'documentation':    { icon: '',                      cls: 'label-docs'        },
+  'duplicate':        { icon: '',                      cls: 'label-duplicate'   },
+  'wontfix':          { icon: '',                      cls: 'label-wontfix'     },
+  'invalid':          { icon: '',                      cls: 'label-invalid'     },
+  'good first issue': { icon: '',                      cls: 'label-good'        },
 };
 
 function buildLabels(labels) {
   if (!labels || !labels.length) return '';
-
   return labels.slice(0, 3).map(lbl => {
-    const name  = typeof lbl === 'string' ? lbl : (lbl.name || '');
-    const key   = name.toLowerCase();
-    const info  = LABEL_MAP[key] || { emoji: '🏷️', cls: 'label-default' };
-
+    const name = typeof lbl === 'string' ? lbl : (lbl.name || '');
+    const info = LABEL_MAP[name.toLowerCase()] || { icon: '', cls: 'label-default' };
     return `
       <span class="inline-flex items-center gap-1 text-[10px] font-bold
                    uppercase px-2.5 py-1 rounded-full ${info.cls}">
@@ -201,127 +179,89 @@ function buildLabels(labels) {
   }).join('');
 }
 
-
-
 function openModal(issue) {
   const isOpen   = getStatus(issue) === 'open';
   const priority = (issue.priority || 'MEDIUM').toUpperCase();
 
+  // Status badge
   const statusBadge = document.getElementById('modalStatusBadge');
-  if (isOpen) {
-    statusBadge.textContent = 'Open';
-    statusBadge.className   = 'text-xs font-semibold px-3 py-1 rounded-full bg-green-100 text-green-700';
-  } else {
-    statusBadge.textContent = 'Closed';
-    statusBadge.className   = 'text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-700';
+  statusBadge.textContent = isOpen ? 'Open' : 'Closed';
+  statusBadge.className   = isOpen
+    ? 'text-xs font-semibold px-3 py-1 rounded-full bg-green-100 text-green-700'
+    : 'text-xs font-semibold px-3 py-1 rounded-full bg-purple-100 text-purple-700';
+
+  const modalIcon = document.getElementById('modalIcon');
+  if (modalIcon) {
+    modalIcon.src = isOpen ? 'assets/Open-Status.png' : 'assets/Closed-Status.png';
   }
 
-  
-  document.getElementById('modalHeaderLabels').innerHTML =
-    buildLabels(issue.labels);
+  document.getElementById('modalHeaderLabels').innerHTML = buildLabels(issue.labels);
+  document.getElementById('modalTitle').textContent      = issue.title || 'Untitled Issue';
+  document.getElementById('modalMeta').textContent       = `Opened by ${issue.author || 'Unknown'} • ${formatDate(issue.createdAt || issue.created_at)}`;
+  document.getElementById('modalDesc').textContent       = issue.description || 'No description provided.';
+  document.getElementById('modalAuthor').textContent     = issue.author || 'Unknown';
 
-  
-  document.getElementById('modalTitle').textContent =
-    issue.title || 'Untitled Issue';
-
-  document.getElementById('modalMeta').textContent =
-    `Opened by ${issue.author || 'Unknown'} • ${formatDate(issue.createdAt || issue.created_at)}`;
-
-  document.getElementById('modalDesc').textContent =
-    issue.description || 'No description provided.';
-
-  
-  document.getElementById('modalAuthor').textContent =
-    issue.author || 'Unknown';
-
-  
   const priBadge = document.getElementById('modalPriorityBadge');
   priBadge.textContent = priority;
   priBadge.className   = `text-xs font-bold px-3 py-1 rounded-full inline-block ${getPriorityClass(priority)}`;
 
- 
   document.getElementById('modalBackdrop').classList.add('open');
-
-  
   document.body.style.overflow = 'hidden';
 }
-
 
 function closeModal() {
   document.getElementById('modalBackdrop').classList.remove('open');
   document.body.style.overflow = '';
 }
 
-
 function closeModalOnBackdrop(e) {
-  
-  if (e.target === document.getElementById('modalBackdrop')) {
-    closeModal();
-  }
+  if (e.target === document.getElementById('modalBackdrop')) closeModal();
 }
 
-
-
-document.addEventListener('keydown', (e) => {
+document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
 });
 
 
-
-function getPriorityClass(priority) {
-  if (priority === 'HIGH')   return 'priority-high';
-  if (priority === 'LOW')    return 'priority-low';
-  return 'priority-medium'; // MEDIUM
+function getPriorityClass(p) {
+  if (p === 'HIGH') return 'priority-high';
+  if (p === 'LOW')  return 'priority-low';
+  return 'priority-medium';
 }
-
 
 function showSpinner() {
   const area = document.getElementById('cardsArea');
-  if (area) {
-    area.innerHTML = `
-      <div class="flex flex-col items-center justify-center py-24 gap-3 text-gray-300">
-        <i class="fa-solid fa-spinner fa-spin text-4xl text-indigo-400"></i>
-        <span class="text-sm">Loading issues…</span>
-      </div>`;
-  }
+  if (area) area.innerHTML = `
+    <div class="flex flex-col items-center justify-center py-24 gap-3 text-gray-300">
+      <i class="fa-solid fa-spinner fa-spin text-4xl text-indigo-400"></i>
+      <span class="text-sm">Loading issues…</span>
+    </div>`;
 }
-
-
 
 function showError(msg) {
   const area = document.getElementById('cardsArea');
-  if (area) {
-    area.innerHTML = `
-      <div class="flex flex-col items-center justify-center py-24 gap-3">
-        <i class="fa-solid fa-triangle-exclamation text-4xl text-red-300"></i>
-        <p class="text-sm text-gray-400 font-medium">${msg}</p>
-        <button onclick="fetchAllIssues()"
-                class="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm
-                       font-semibold px-4 py-2 rounded-xl transition-colors flex
-                       items-center gap-2">
-          <i class="fa-solid fa-rotate-right"></i> Try Again
-        </button>
-      </div>`;
-  }
+  if (area) area.innerHTML = `
+    <div class="flex flex-col items-center justify-center py-24 gap-3">
+      <i class="fa-solid fa-triangle-exclamation text-4xl text-red-300"></i>
+      <p class="text-sm text-gray-400 font-medium">${msg}</p>
+      <button onclick="fetchAllIssues()"
+              class="mt-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm
+                     font-semibold px-4 py-2 rounded-xl transition-colors flex items-center gap-2">
+        <i class="fa-solid fa-rotate-right"></i> Try Again
+      </button>
+    </div>`;
 }
-
-
 
 function formatDate(dateStr) {
   if (!dateStr) return '–';
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return dateStr;
-  return d.toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric', year: 'numeric'
-  });
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
-
-
 
 function truncate(str, max) {
   return str.length > max ? str.slice(0, max) + '…' : str;
 }
-
 
 function esc(str) {
   return String(str)
