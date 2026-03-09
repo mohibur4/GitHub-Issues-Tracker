@@ -8,7 +8,7 @@ if (localStorage.getItem('isLoggedIn') !== 'true') {
 
 function logout() {
   localStorage.removeItem('isLoggedIn');
-  window.location.href = 'login.html';
+  window.location.href = 'dashboard.html';
 }
 
 let allIssues   = [];     
@@ -116,6 +116,7 @@ function renderCards(issues) {
 function buildCard(issue) {
   const isOpen      = getStatus(issue) === 'open';
   const borderClass = isOpen ? 'card-open' : 'card-closed';
+
   const priority    = (issue.priority || 'MEDIUM').toUpperCase();
   const priClass    = getPriorityClass(priority);
   const labelsHTML  = buildLabels(issue.labels);
