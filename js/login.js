@@ -5,10 +5,7 @@ const eyeIcon       = document.getElementById('eyeIcon');
 if (togglePwd) {
   togglePwd.addEventListener('click', () => {
     const isPassword = passwordInput.type === 'password';
-
-    
     passwordInput.type = isPassword ? 'text' : 'password';
-
     eyeIcon.className = isPassword
       ? 'fa-solid fa-eye-slash text-sm'
       : 'fa-solid fa-eye text-sm';
@@ -30,8 +27,6 @@ function handleLogin() {
   }
 
   if (username === 'admin' && password === 'admin123') {
-
-    
     btn.innerHTML = `
       <svg class="animate-spin w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -39,38 +34,25 @@ function handleLogin() {
       </svg>
       Signing in…`;
     btn.disabled = true;
-
-    
     localStorage.setItem('isLoggedIn', 'true');
-
-   
     setTimeout(() => {
-  window.location.href = 'dashboard.html';
-}, 800);
+      window.location.href = '../dashboard.html';
+    }, 800);
 
   } else {
-
- 
     errorMsg.textContent = 'Invalid username or password';
     errorAlert.classList.remove('hidden');
     errorAlert.classList.add('flex');
-
- 
     document.getElementById('password').value = '';
     document.getElementById('password').focus();
   }
 }
 
-
 document.getElementById('loginBtn').addEventListener('click', handleLogin);
-
-
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') handleLogin();
 });
-
-
 
 ['username', 'password'].forEach(id => {
   document.getElementById(id).addEventListener('input', () => {
